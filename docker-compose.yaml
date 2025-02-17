@@ -2,26 +2,26 @@ version: '3.8'
 
 services:
   frontend:
-    container_name: frontend
+    container_name: frontend-sh
     build:
       context: ./frontend
     ports:
-      - "3000:3000"
+      - "3002:3000"
     volumes:
       - ./frontend/:/app/
     networks:
       - server-network
     environment:
       - CHOKIDAR_USEPOLLING=true
-      - REACT_APP_API_URL=http://backend:3000
+      - REACT_APP_API_URL=http://backend-sh:3000
     command: sleep infinity
 
   backend:
-    container_name: backend
+    container_name: backend-sh
     build:
       context: ./backend
     ports:
-      - "3001:3001"
+      - "3003:3001"
     volumes:
       - ./backend/:/app/
     networks:
@@ -33,22 +33,22 @@ services:
     command: sleep infinity
 
   mosquitto:
-    container_name: mosquitto
+    container_name: mosquitto-sh
     image: eclipse-mosquitto:latest
     ports:
-      - "1883:1883"     # MQTT port
-      - "9001:9001"     # WebSocket port (optional)
+      - "1885:1883"     # MQTT port
+      - "9002:9001"     # WebSocket port (optional)
     volumes:
       - ./mosquitto/config:/mosquitto/config   # Config files for Mosquitto
     networks:
       - server-network
 
   mysql:
-    container_name: mysql
+    container_name: mysql-sh
     image: mysql:8.4.3
     restart: always
-    # ports:
-    #   - 3306:3306
+    ports:
+      - 3308:3306
     volumes:
       - ./mysql/init-scripts:/docker-entrypoint-initdb.d
       - ./mysql/db:/var/lib/mysql
@@ -61,11 +61,11 @@ services:
       MYSQL_USER: webapp
 
   adminer:
-    container_name: adminer
+    container_name: adminer-sh
     image: adminer
     restart: always
     ports:
-      - 9090:8080
+      - 9092:8080
     networks:
       - server-network
     environment:
