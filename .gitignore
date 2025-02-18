@@ -4,3 +4,12 @@
 .vscode/launch.json
 .vscode/ipch
 include/secrets.h
+*.env
+
+frontend/node_modules/
+frontend/build/
+
+backend/node_modules/
+
+# MySQL Data folder (if you want to exclude persistent DB data)
+mysql/db/
