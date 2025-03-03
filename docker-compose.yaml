@@ -1,36 +1,36 @@
 version: '3.8'
 
 services:
-  frontend:
-    container_name: frontend-sh
-    build:
-      context: ./frontend
-    ports:
-      - "3002:3000"
-    volumes:
-      - ./frontend/:/app/
-    networks:
-      - server-network
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-      - REACT_APP_API_URL=http://backend-sh:3000
-    command: sleep infinity
+  # frontend:
+  #   container_name: frontend-sh
+  #   build:
+  #     context: ./frontend
+  #   ports:
+  #     - "3002:3000"
+  #   volumes:
+  #     - ./frontend/:/app/
+  #   networks:
+  #     - server-network
+  #   environment:
+  #     - CHOKIDAR_USEPOLLING=true
+  #     - REACT_APP_API_URL=http://backend-sh:3000
+  #   command: sleep infinity
 
-  backend:
-    container_name: backend-sh
-    build:
-      context: ./backend
-    ports:
-      - "3003:3001"
-    volumes:
-      - ./backend/:/app/
-    networks:
-      - server-network
-    environment:
-      - NODE_ENV=development
-      - HOST=0.0.0.0
-      - PORT=3001
-    command: sleep infinity
+  # backend:
+  #   container_name: backend-sh
+  #   build:
+  #     context: ./backend
+  #   ports:
+  #     - "3003:3001"
+  #   volumes:
+  #     - ./backend/:/app/
+  #   networks:
+  #     - server-network
+  #   environment:
+  #     - NODE_ENV=development
+  #     - HOST=0.0.0.0
+  #     - PORT=3001
+  #   command: sleep infinity
 
   mosquitto:
     container_name: mosquitto-sh
