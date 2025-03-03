@@ -43,33 +43,33 @@ services:
     networks:
       - server-network
 
-  mysql:
-    container_name: mysql-sh
-    image: mysql:8.4.3
-    restart: always
-    ports:
-      - 3308:3306
-    volumes:
-      - ./mysql/init-scripts:/docker-entrypoint-initdb.d
-      - ./mysql/db:/var/lib/mysql
-    networks:
-      - server-network
-    environment:
-      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
-      MYSQL_PASSWORD: "${DB_PASSWORD}"
-      MYSQL_DATABASE: webapp
-      MYSQL_USER: webapp
+  # mysql:
+  #   container_name: mysql-sh
+  #   image: mysql:8.4.3
+  #   restart: always
+  #   ports:
+  #     - 3308:3306
+  #   volumes:
+  #     - ./mysql/init-scripts:/docker-entrypoint-initdb.d
+  #     - ./mysql/db:/var/lib/mysql
+  #   networks:
+  #     - server-network
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+  #     MYSQL_PASSWORD: "${DB_PASSWORD}"
+  #     MYSQL_DATABASE: webapp
+  #     MYSQL_USER: webapp
 
-  adminer:
-    container_name: adminer-sh
-    image: adminer
-    restart: always
-    ports:
-      - 9092:8080
-    networks:
-      - server-network
-    environment:
-      ADMINER_DEFAULT_SERVER: mysql
+  # adminer:
+  #   container_name: adminer-sh
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 9092:8080
+  #   networks:
+  #     - server-network
+  #   environment:
+  #     ADMINER_DEFAULT_SERVER: mysql
 
 networks:
   server-network:
