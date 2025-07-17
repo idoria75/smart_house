@@ -34,7 +34,7 @@ services:
 
   mosquitto:
     container_name: mosquitto-sh
-    image: eclipse-mosquitto:latest
+    image: eclipse-mosquitto:2.0.22
     ports:
       - "1885:1883"     # MQTT port
       - "9002:9001"     # WebSocket port (optional)
