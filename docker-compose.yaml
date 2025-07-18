@@ -1,75 +1,72 @@
 version: '3.8'
 
 services:
-  # frontend:
-  #   container_name: frontend-sh
-  #   build:
-  #     context: ./frontend
-  #   ports:
-  #     - "3002:3000"
-  #   volumes:
-  #     - ./frontend/:/app/
-  #   networks:
-  #     - server-network
-  #   environment:
-  #     - CHOKIDAR_USEPOLLING=true
-  #     - REACT_APP_API_URL=http://backend-sh:3000
-  #   command: sleep infinity
-
-  # backend:
-  #   container_name: backend-sh
-  #   build:
-  #     context: ./backend
-  #   ports:
-  #     - "3003:3001"
-  #   volumes:
-  #     - ./backend/:/app/
-  #   networks:
-  #     - server-network
-  #   environment:
-  #     - NODE_ENV=development
-  #     - HOST=0.0.0.0
-  #     - PORT=3001
-  #   command: sleep infinity
-
-  mosquitto:
-    container_name: mosquitto-sh
-    image: eclipse-mosquitto:2.0.22
+  frontend:
+    container_name: frontend-sh
+    build:
+      context: ./frontend
     ports:
-      - "1885:1883"     # MQTT port
-      - "9002:9001"     # WebSocket port (optional)
-    volumes:
-      - ./mosquitto/config:/mosquitto/config   # Config files for Mosquitto
+      - "3002:3000" 
     networks:
       - server-network
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_API_URL=http://192.168.0.11:3003
 
-  # mysql:
-  #   container_name: mysql-sh
-  #   image: mysql:8.4.3
-  #   restart: always
+  backend:
+    container_name: backend-sh
+    build:
+      context: ./backend
+    ports:
+      - "3003:3001"
+    networks:
+      - server-network
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=3001
+      - MQTT_BROKER=mqtt://192.168.0.126:1885
+
+  # mosquitto:
+  #   container_name: mosquitto-sh
+  #   image: eclipse-mosquitto:2.0.22
   #   ports:
-  #     - 3308:3306
+  #     - "1885:1883"
+  #     - "9002:9001"
   #   volumes:
-  #     - ./mysql/init-scripts:/docker-entrypoint-initdb.d
-  #     - ./mysql/db:/var/lib/mysql
+  #     - ./mosquitto/config:/mosquitto/config
   #   networks:
   #     - server-network
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
-  #     MYSQL_PASSWORD: "${DB_PASSWORD}"
-  #     MYSQL_DATABASE: webapp
-  #     MYSQL_USER: webapp
 
-  # adminer:
-  #   container_name: adminer-sh
-  #   image: adminer
-  #   restart: always
-  #   ports:
-  #     - 9092:8080
-  #   networks:
-  #     - server-network
-  #   environment:
-  #     ADMINER_DEFAULT_SERVER: mysql
+  mysql:
+    container_name: mysql-sh
+    image: mysql:8.4.3
+    restart: always
+    ports:
+      - 3308:3306
+    volumes:
+      - ./mysql/init-scripts:/docker-entrypoint-initdb.d
+      - ./mysql/db:/var/lib/mysql
+    networks:
+      - server-network
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+
+  adminer:
+    container_name: adminer-sh
+    image: adminer
+    restart: always
+    ports:
+      - 9092:8080
+    networks:
+      - server-network
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
 
 networks:
   server-network:
