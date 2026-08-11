@@ -1,3 +1,6 @@
+# Machine-local Claude Code settings
+.claude/settings.local.json
+
 # Secrets
 .env
 *.env
