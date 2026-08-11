@@ -89,11 +89,10 @@ Development order: **① ESP32 firmware → ② MQTT + DB integration → ③ we
 
 ## 3. Defaults chosen without an explicit decision (revisit if wrong)
 
-- **MQTT topics**: `home/<device_id>/readings` for data; `home/<device_id>/status` with an
-  MQTT Last Will for online/offline (feeds the dashboard's device status).
-- **Payload**: JSON, QoS 1. Backfill after reconnection drains LittleFS oldest-first in
-  batches (e.g., 100 records/message); records are deleted from flash only after the broker
-  acknowledges (QoS 1), so nothing is lost mid-flush.
+- **MQTT transport & payload**: settled 2026-08-11 in `DESIGN-firmware.md` — QoS 0 with an
+  application-level ack from the backend, batches of 10 readings/message (~1 msg/s during
+  backfill), snake_case fields with unit suffixes (`temp_c`, `hum_pct`, `time_utc`), UTC
+  everywhere, wall-clock-aligned minute averages with partial windows dropped.
 - **DB schema (clean, replaces v1's redundant tables)**: `devices` (id, mac, location,
   created_at, last_seen) and two reading tiers, `readings_1min` and `readings_10min`, both
   keyed (device_id, ts). v1's overlapping `sensors`/`readings`/`sensor_readings` trio is
@@ -104,7 +103,9 @@ Development order: **① ESP32 firmware → ② MQTT + DB integration → ③ we
 
 ## 4. Open questions (park until relevant)
 
-- Exact LittleFS record format (binary vs CSV lines) and file rotation on the device.
+- ~~Exact LittleFS record format and file rotation on the device~~ — resolved in
+  `DESIGN-firmware.md` §2 (binary records in ~4 h segment files, whole-segment deletion
+  after ack; LittleFS chosen over deprecated SPIFFS for power-loss resilience).
 - Whether the 10-min tier ever needs a further hourly tier (only if DB size becomes a topic).
 - Config portal / provisioning UX if the fleet grows beyond a handful of nodes.
 - Additional sensor types and how they extend the schema (wide table vs per-metric rows).

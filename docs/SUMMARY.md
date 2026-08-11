@@ -9,7 +9,8 @@ Build order: firmware → MQTT/DB → web app. Fresh start on `v2`; details in `
 - Sample every ~10 s, emit **one average per minute**.
 - **Offline buffer on LittleFS**: all unflushed averages persist on flash — roughly
   **2 months of autonomy** (~16 B/record in ~1.5 MB), survives power loss.
-- On reconnect, backfill oldest-first over MQTT (QoS 1); delete from flash only after ACK.
+- On reconnect, backfill oldest-first over MQTT — 10 readings/message, ~1 msg/s, QoS 0
+  with backend ack; segment files deleted from flash only once fully acknowledged.
 - Local debug interface: **`/data.csv` + tiny HTML table** served by the device.
 - **OTA updates** (ArduinoOTA) — no PC hookup for reflashing.
 - Identity by **MAC/chip ID**; location names assigned server-side.
@@ -18,7 +19,8 @@ Build order: firmware → MQTT/DB → web app. Fresh start on `v2`; details in `
 ## Transport & storage
 
 - **Mosquitto with user/password auth** (no more anonymous, no TLS on LAN).
-- Topics: `home/<device_id>/readings` (JSON) + `home/<device_id>/status` (Last Will).
+- Topics: `home/<device_id>/readings` (JSON) + `.../ack` (backend ack) + `.../status`
+  (Last Will). Contract details in `DESIGN-firmware.md`.
 - **MySQL** on the home server (docker-compose, with Adminer).
 - Tables: `devices`, `readings_1min`, `readings_10min`.
 - **Retention**: 1-min averages kept **2 weeks**, then downsampled to
